@@ -1,0 +1,43 @@
+name: CI
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: learnhub_test
+        ports:
+          - 3306:3306
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          composer install
+      - name: Run migrations
+        run: |
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/001_create_users_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/002_create_courses_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/003_create_batches_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/004_create_batch_instructors_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/005_create_batch_students_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/006_create_lessons_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/007_create_materials_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/008_create_attendance_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/009_create_notifications_table.sql
+          mysql -u root -proot -h 127.0.0.1 learnhub_test < database/migrations/010_create_audit_logs_table.sql
+      - name: Run tests
+        run: |
+          cd backend
+          vendor/bin/phpunit
