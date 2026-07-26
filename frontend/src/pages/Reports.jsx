@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from '../App'
 import { useContext } from 'react'
-import axios from 'axios'
 
 export default function Reports() {
-  const { user } = useContext(AuthContext)
+  const { user, api } = useContext(AuthContext)
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -15,9 +14,8 @@ export default function Reports() {
 
   const fetchReport = async () => {
     try {
-      let url = '/api/reports/daily'
-      const res = await axios.get(url)
-      setReport(res.data.data)
+      const res = await api.get('/reports/daily')
+      setReport(res.data.report || null)
     } catch (err) {
       setError('Failed to load report')
     } finally {

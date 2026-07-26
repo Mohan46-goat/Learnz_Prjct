@@ -50,11 +50,11 @@ switch ($route) {
     case (preg_match('#^/users/(\d+)$#', $route, $matches) ? true : false):
         $id = (int) $matches[1];
         if ($method === 'GET') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () { (new UserController())->show($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () use ($id) { (new UserController())->show($id); }); });
         } elseif ($method === 'PUT') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () { (new UserController())->update($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () use ($id) { (new UserController())->update($id); }); });
         } elseif ($method === 'PATCH') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () { (new UserController())->updateStatus($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () use ($id) { (new UserController())->updateStatus($id); }); });
         }
         break;
 
@@ -69,11 +69,11 @@ switch ($route) {
     case (preg_match('#^/courses/(\d+)$#', $route, $matches) ? true : false):
         $id = (int) $matches[1];
         if ($method === 'GET') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () { (new CourseController())->show($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () use ($id) { (new CourseController())->show($id); }); });
         } elseif ($method === 'PUT') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () { (new CourseController())->update($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () use ($id) { (new CourseController())->update($id); }); });
         } elseif ($method === 'DELETE') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () { (new CourseController())->delete($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () use ($id) { (new CourseController())->delete($id); }); });
         }
         break;
 
@@ -88,23 +88,23 @@ switch ($route) {
     case (preg_match('#^/batches/(\d+)$#', $route, $matches) ? true : false):
         $id = (int) $matches[1];
         if ($method === 'GET') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin', 'instructor']))->handle(function () { (new BatchController())->show($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin', 'instructor']))->handle(function () use ($id) { (new BatchController())->show($id); }); });
         } elseif ($method === 'PUT') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () { (new BatchController())->update($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () use ($id) { (new BatchController())->update($id); }); });
         }
         break;
 
     case (preg_match('#^/batches/(\d+)/assign-instructor$#', $route, $matches) ? true : false):
         $batchId = (int) $matches[1];
         if ($method === 'POST') {
-            $auth->handle(function () use ($batchId) { (new RoleMiddleware(['admin']))->handle(function () { (new BatchController())->assignInstructor($batchId); }); });
+            $auth->handle(function () use ($batchId) { (new RoleMiddleware(['admin']))->handle(function () use ($batchId) { (new BatchController())->assignInstructor($batchId); }); });
         }
         break;
 
     case (preg_match('#^/batches/(\d+)/add-student$#', $route, $matches) ? true : false):
         $batchId = (int) $matches[1];
         if ($method === 'POST') {
-            $auth->handle(function () use ($batchId) { (new RoleMiddleware(['admin']))->handle(function () { (new BatchController())->addStudent($batchId); }); });
+            $auth->handle(function () use ($batchId) { (new RoleMiddleware(['admin']))->handle(function () use ($batchId) { (new BatchController())->addStudent($batchId); }); });
         }
         break;
 
@@ -112,7 +112,7 @@ switch ($route) {
         $batchId = (int) $matches[1];
         $studentId = (int) $matches[2];
         if ($method === 'DELETE') {
-            $auth->handle(function () use ($batchId, $studentId) { (new RoleMiddleware(['admin']))->handle(function () { (new BatchController())->removeStudent($batchId, $studentId); }); });
+            $auth->handle(function () use ($batchId, $studentId) { (new RoleMiddleware(['admin']))->handle(function () use ($batchId, $studentId) { (new BatchController())->removeStudent($batchId, $studentId); }); });
         }
         break;
 
@@ -127,11 +127,11 @@ switch ($route) {
     case (preg_match('#^/lessons/(\d+)$#', $route, $matches) ? true : false):
         $id = (int) $matches[1];
         if ($method === 'GET') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin', 'instructor', 'student']))->handle(function () { (new LessonController())->show($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin', 'instructor', 'student']))->handle(function () use ($id) { (new LessonController())->show($id); }); });
         } elseif ($method === 'PUT') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['instructor']))->handle(function () { (new LessonController())->update($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['instructor']))->handle(function () use ($id) { (new LessonController())->update($id); }); });
         } elseif ($method === 'DELETE') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['instructor']))->handle(function () { (new LessonController())->delete($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['instructor']))->handle(function () use ($id) { (new LessonController())->delete($id); }); });
         }
         break;
 
@@ -153,7 +153,7 @@ switch ($route) {
         if ($method === 'GET') {
             $auth->handle(function () { (new NotificationController())->index(); });
         } elseif ($method === 'PATCH') {
-            $auth->handle(function () { (new NotificationController())->markAllRead()); });
+            $auth->handle(function () { (new NotificationController())->markAllRead(); });
         }
         break;
 
@@ -173,7 +173,7 @@ switch ($route) {
     case (preg_match('#^/materials/(\d+)/download$#', $route, $matches) ? true : false):
         $id = (int) $matches[1];
         if ($method === 'GET') {
-            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin', 'instructor', 'student']))->handle(function () { (new MaterialController())->download($id); }); });
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin', 'instructor', 'student']))->handle(function () use ($id) { (new MaterialController())->download($id); }); });
         }
         break;
 
@@ -186,14 +186,14 @@ switch ($route) {
     case (preg_match('#^/reports/student/(\d+)$#', $route, $matches) ? true : false):
         $studentId = (int) $matches[1];
         if ($method === 'GET') {
-            $auth->handle(function () use ($studentId) { (new RoleMiddleware(['admin', 'student']))->handle(function () { (new ReportController())->student($studentId); }); });
+            $auth->handle(function () use ($studentId) { (new RoleMiddleware(['admin', 'student']))->handle(function () use ($studentId) { (new ReportController())->student($studentId); }); });
         }
         break;
 
     case (preg_match('#^/reports/batch/(\d+)$#', $route, $matches) ? true : false):
         $batchId = (int) $matches[1];
         if ($method === 'GET') {
-            $auth->handle(function () use ($batchId) { (new RoleMiddleware(['admin', 'instructor']))->handle(function () { (new ReportController())->batch($batchId); }); });
+            $auth->handle(function () use ($batchId) { (new RoleMiddleware(['admin', 'instructor']))->handle(function () use ($batchId) { (new ReportController())->batch($batchId); }); });
         }
         break;
 

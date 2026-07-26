@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from '../App'
 import { useContext } from 'react'
-import axios from 'axios'
 
 export default function Users() {
-  const { user } = useContext(AuthContext)
+  const { user, api } = useContext(AuthContext)
   const [users, setUsers] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student', status: 'active' })
@@ -17,8 +16,8 @@ export default function Users() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get('/api/users')
-      setUsers(res.data.data.users || [])
+      const res = await api.get('/users')
+      setUsers(res.data.users || [])
     } catch (err) {
       setError('Failed to load users')
     } finally {
@@ -30,7 +29,7 @@ export default function Users() {
     e.preventDefault()
     setError('')
     try {
-      await axios.post('/api/users', formData)
+      await api.post('/users', formData)
       setShowForm(false)
       setFormData({ name: '', email: '', password: '', role: 'student', status: 'active' })
       fetchUsers()
@@ -41,7 +40,7 @@ export default function Users() {
 
   const handleDeactivate = async (id) => {
     try {
-      await axios.patch(`/api/users/${id}/status`, { status: 'inactive' })
+      await api.patch(`/users/${id}/status`, { status: 'inactive' })
       fetchUsers()
     } catch (err) {
       setError('Failed to update user')

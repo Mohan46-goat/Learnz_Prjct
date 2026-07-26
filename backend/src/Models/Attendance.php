@@ -11,6 +11,18 @@ class Attendance
         $this->db = $db;
     }
 
+    public function findAll(): array
+    {
+        $stmt = $this->db->query(
+            'SELECT a.*, u.name as student_name, l.title as lesson_title
+             FROM attendance a
+             JOIN users u ON a.student_id = u.id
+             JOIN lessons l ON a.lesson_id = l.id
+             ORDER BY a.marked_at DESC'
+        );
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function findByLesson(int $lessonId): array
     {
         $stmt = $this->db->prepare('SELECT * FROM attendance WHERE lesson_id = :lesson_id ORDER BY student_id');

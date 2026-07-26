@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from '../App'
 import { useContext } from 'react'
-import axios from 'axios'
 
 export default function Courses() {
-  const { user } = useContext(AuthContext)
+  const { user, api } = useContext(AuthContext)
   const [courses, setCourses] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ name: '', description: '' })
@@ -17,8 +16,8 @@ export default function Courses() {
 
   const fetchCourses = async () => {
     try {
-      const res = await axios.get('/api/courses')
-      setCourses(res.data.data || [])
+      const res = await api.get('/courses')
+      setCourses(res.data.courses || [])
     } catch (err) {
       setError('Failed to load courses')
     } finally {
@@ -30,7 +29,7 @@ export default function Courses() {
     e.preventDefault()
     setError('')
     try {
-      await axios.post('/api/courses', formData)
+      await api.post('/courses', formData)
       setShowForm(false)
       setFormData({ name: '', description: '' })
       fetchCourses()
@@ -41,7 +40,7 @@ export default function Courses() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/courses/${id}`)
+      await api.delete(`/courses/${id}`)
       fetchCourses()
     } catch (err) {
       setError('Failed to delete course')

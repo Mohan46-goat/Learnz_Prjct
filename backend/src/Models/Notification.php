@@ -20,8 +20,7 @@ class Notification
             $sql .= ' AND is_read = FALSE';
         }
 
-        $sql .= ' ORDER BY created_at DESC LIMIT :limit';
-        $params['limit'] = $limit;
+        $sql .= ' ORDER BY created_at DESC LIMIT ' . (int) $limit;
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);

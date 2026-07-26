@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from '../App'
 import { useContext } from 'react'
-import axios from 'axios'
 
 export default function AdminDashboard() {
-  const { user } = useContext(AuthContext)
+  const { user, api } = useContext(AuthContext)
   const [stats, setStats] = useState({})
   const [loading, setLoading] = useState(true)
 
@@ -12,18 +11,23 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const [usersRes, coursesRes, batchesRes, attendanceRes] = await Promise.all([
-          axios.get('/api/users'),
-          axios.get('/api/courses'),
-          axios.get('/api/batches'),
-          axios.get('/api/attendance?date=' + new Date().toISOString().split('T')[0]),
+          api.get('/users'),
+          api.get('/courses'),
+          api.get('/batches'),
+          api.get('/attendance'),
         ])
 
-        const todayAttendance = attendanceRes.data.data || []
+        const allUsers = usersRes.data.users || []
+        const allCourses = coursesRes.data.courses || []
+        const allBatches = batchesRes.data.batches || []
+        const todayAttendance = attendanceRes.data.attendance || []
+        const today = new Date().toISOString().split('T')[0]
+
         setStats({
-          totalStudents: usersRes.data.data.users?.filter((u) => u.role === 'student').length || 0,
-          totalInstructors: usersRes.data.data.users?.filter((u) => u.role === 'instructor').length || 0,
-          totalCourses: coursesRes.data.data?.length || 0,
-          totalBatches: batchesRes.data.data?.length || 0,
+          totalStudents: allUsers.filter((u) => u.role === 'student').length,
+          totalInstructors: allUsers.filter((u) => u.role === 'instructor').length,
+          totalCourses: allCourses.length,
+          totalBatches: allBatches.length,
           todayPresent: todayAttendance.filter((a) => a.status === 'present').length,
           todayLate: todayAttendance.filter((a) => a.status === 'late').length,
           todayAbsent: todayAttendance.filter((a) => a.status === 'absent').length,

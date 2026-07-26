@@ -63,6 +63,8 @@ class BatchController
                 ResponseHelper::json(['success' => false, 'message' => 'Batch not found', 'errors' => []], 404);
                 return;
             }
+            $batch['instructors'] = $this->batchService->getBatchInstructors($id);
+            $batch['students'] = $this->batchService->getBatchStudents($id);
             ResponseHelper::json(['batch' => $batch]);
         } catch (\Exception $e) {
             ResponseHelper::json(['success' => false, 'message' => 'Failed to retrieve batch', 'errors' => []], 500);

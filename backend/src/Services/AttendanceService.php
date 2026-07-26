@@ -14,7 +14,7 @@ class AttendanceService
     public function getAllAttendance(): array
     {
         $attendanceModel = new \App\Models\Attendance($this->db);
-        return $attendanceModel->findByLesson(0);
+        return $attendanceModel->findAll();
     }
 
     public function getMyAttendance(int $userId): array

@@ -23,6 +23,18 @@ class BatchService
         return $batchModel->findById($id);
     }
 
+    public function getBatchInstructors(int $id): array
+    {
+        $batchModel = new \App\Models\Batch($this->db);
+        return $batchModel->getInstructors($id);
+    }
+
+    public function getBatchStudents(int $id): array
+    {
+        $batchModel = new \App\Models\Batch($this->db);
+        return $batchModel->getStudents($id);
+    }
+
     public function createBatch(array $data): array
     {
         $batchModel = new \App\Models\Batch($this->db);

@@ -67,12 +67,16 @@ function App() {
 
   return (
     <AuthContext.Provider value={{ user, setUser, login, logout, api }}>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="dashboard" element={
+            user?.role === 'admin' ? <AdminDashboard /> :
+            user?.role === 'instructor' ? <InstructorDashboard /> :
+            <StudentDashboard />
+          } />
             <Route path="users" element={<Users />} />
             <Route path="courses" element={<Courses />} />
             <Route path="batches" element={<Batches />} />

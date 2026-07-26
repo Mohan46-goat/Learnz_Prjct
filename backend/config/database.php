@@ -1,6 +1,7 @@
 <?php
 
-$dotenv = parse_ini_file(__DIR__ . '/../.env');
+$envFile = __DIR__ . '/../.env';
+$dotenv = file_exists($envFile) ? parse_ini_file($envFile) : [];
 
 return [
     'host' => $dotenv['DB_HOST'] ?? 'localhost',

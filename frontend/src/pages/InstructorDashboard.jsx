@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from '../App'
 import { useContext } from 'react'
-import axios from 'axios'
 
 export default function InstructorDashboard() {
-  const { user } = useContext(AuthContext)
+  const { user, api } = useContext(AuthContext)
   const [batches, setBatches] = useState([])
   const [todayLesson, setTodayLesson] = useState(null)
   const [attendance, setAttendance] = useState({ present: 0, late: 0, absent: 0 })
@@ -14,19 +13,23 @@ export default function InstructorDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [batchesRes, todayRes, notifRes] = await Promise.all([
-          axios.get('/api/batches'),
-          axios.get('/api/lessons?date=' + new Date().toISOString().split('T')[0]),
-          axios.get('/api/notifications?is_read=false&limit=10'),
+        const [batchesRes, lessonsRes, notifRes] = await Promise.all([
+          api.get('/batches'),
+          api.get('/lessons'),
+          api.get('/notifications'),
         ])
 
-        setBatches(batchesRes.data.data?.batches || [])
-        setTodayLesson(todayRes.data.data?.lessons?.[0] || null)
-        setNotifications(notifRes.data.data?.notifications || [])
+        const today = new Date().toISOString().split('T')[0]
+        const allLessons = lessonsRes.data.lessons || []
+        const todayLessons = allLessons.filter((l) => l.lesson_date === today)
 
-        if (todayRes.data.data?.lessons?.[0]) {
-          const attRes = await axios.get('/api/attendance?lesson_id=' + todayRes.data.data.lessons[0].id)
-          const records = attRes.data.data?.attendance || []
+        setBatches(batchesRes.data.batches || [])
+        setTodayLesson(todayLessons[0] || null)
+        setNotifications((notifRes.data.notifications || []).filter((n) => !n.is_read))
+
+        if (todayLessons[0]) {
+          const attRes = await api.get('/attendance')
+          const records = (attRes.data.attendance || []).filter((r) => r.lesson_id == todayLessons[0].id)
           setAttendance({
             present: records.filter((r) => r.status === 'present').length,
             late: records.filter((r) => r.status === 'late').length,

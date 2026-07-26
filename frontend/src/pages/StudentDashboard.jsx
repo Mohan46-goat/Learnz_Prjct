@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from '../App'
 import { useContext } from 'react'
-import axios from 'axios'
 
 export default function StudentDashboard() {
-  const { user } = useContext(AuthContext)
+  const { user, api } = useContext(AuthContext)
   const [batches, setBatches] = useState([])
   const [todayLesson, setTodayLesson] = useState(null)
   const [attendanceStatus, setAttendanceStatus] = useState(null)
@@ -15,24 +14,30 @@ export default function StudentDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [batchesRes, todayRes, notifRes, pctRes] = await Promise.all([
-          axios.get('/api/batches'),
-          axios.get('/api/lessons?date=' + new Date().toISOString().split('T')[0]),
-          axios.get('/api/notifications?is_read=false&limit=10'),
-          axios.get('/api/reports/percentage'),
+        const [batchesRes, lessonsRes, notifRes, myAttRes] = await Promise.all([
+          api.get('/batches'),
+          api.get('/lessons'),
+          api.get('/notifications'),
+          api.get('/attendance/my'),
         ])
 
-        setBatches(batchesRes.data.data?.batches || [])
-        setTodayLesson(todayRes.data.data?.lessons?.[0] || null)
-        setNotifications(notifRes.data.data?.notifications || [])
-        setPercentage(pctRes.data.data?.percentage || 0)
+        const today = new Date().toISOString().split('T')[0]
+        const allLessons = lessonsRes.data.lessons || []
+        const todayLessons = allLessons.filter((l) => l.lesson_date === today)
+        const myRecords = myAttRes.data.attendance || []
 
-        if (todayRes.data.data?.lessons?.[0]) {
-          const attRes = await axios.get('/api/attendance/my')
-          const records = attRes.data.data?.attendance || []
-          const todayRecord = records.find((r) => r.lesson_id === todayRes.data.data.lessons[0].id)
+        setBatches(batchesRes.data.batches || [])
+        setTodayLesson(todayLessons[0] || null)
+        setNotifications((notifRes.data.notifications || []).filter((n) => !n.is_read))
+
+        if (todayLessons[0]) {
+          const todayRecord = myRecords.find((r) => r.lesson_id == todayLessons[0].id)
           setAttendanceStatus(todayRecord?.status || null)
         }
+
+        const total = myRecords.length
+        const present = myRecords.filter((r) => r.status === 'present').length
+        setPercentage(total > 0 ? Math.round((present / total) * 100) : 0)
       } catch (err) {
         console.error('Failed to fetch student data', err)
       } finally {

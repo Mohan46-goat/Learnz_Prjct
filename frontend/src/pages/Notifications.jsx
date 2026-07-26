@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { AuthContext } from '../App'
 import { useContext } from 'react'
-import axios from 'axios'
 
 export default function Notifications() {
-  const { user } = useContext(AuthContext)
+  const { user, api } = useContext(AuthContext)
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -14,8 +13,8 @@ export default function Notifications() {
 
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get('/api/notifications')
-      setNotifications(res.data.data?.notifications || [])
+      const res = await api.get('/notifications')
+      setNotifications(res.data.notifications || [])
     } catch (err) {
       console.error('Failed to load notifications', err)
     } finally {
@@ -25,7 +24,7 @@ export default function Notifications() {
 
   const handleMarkRead = async (id) => {
     try {
-      await axios.patch(`/api/notifications/${id}/read`)
+      await api.patch(`/notifications/${id}/read`)
       fetchNotifications()
     } catch (err) {
       console.error('Failed to mark as read', err)
@@ -34,7 +33,7 @@ export default function Notifications() {
 
   const handleMarkAllRead = async () => {
     try {
-      await axios.patch('/api/notifications/read-all')
+      await api.patch('/notifications/read-all')
       fetchNotifications()
     } catch (err) {
       console.error('Failed to mark all as read', err)
