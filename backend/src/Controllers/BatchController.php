@@ -26,6 +26,18 @@ class BatchController
         );
     }
 
+    public function myBatches(): void
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        $role = $_SESSION['role'] ?? null;
+        try {
+            $batches = $this->batchService->getMyBatches($userId, $role);
+            ResponseHelper::json(['batches' => $batches]);
+        } catch (\Exception $e) {
+            ResponseHelper::json(['success' => false, 'message' => 'Failed to retrieve batches', 'errors' => []], 500);
+        }
+    }
+
     public function index(): void
     {
         try {
@@ -86,6 +98,16 @@ class BatchController
             ResponseHelper::json(['success' => false, 'message' => $e->getMessage(), 'errors' => []], 400);
         } catch (\Exception $e) {
             ResponseHelper::json(['success' => false, 'message' => 'Failed to update batch', 'errors' => []], 500);
+        }
+    }
+
+    public function getStudents(int $id): void
+    {
+        try {
+            $students = $this->batchService->getBatchStudents($id);
+            ResponseHelper::json(['students' => $students]);
+        } catch (\Exception $e) {
+            ResponseHelper::json(['success' => false, 'message' => 'Failed to retrieve students', 'errors' => []], 500);
         }
     }
 

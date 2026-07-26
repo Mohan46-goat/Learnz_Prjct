@@ -50,12 +50,18 @@ export default function Notifications() {
       </div>
       {notifications.map((n) => (
         <div key={n.id} className={`card ${n.is_read ? '' : 'unread'}`}>
-          <h4>{n.title}</h4>
-          <p>{n.message}</p>
-          <small>{n.created_at}</small>
-          {!n.is_read && (
-            <button className="btn btn-primary" onClick={() => handleMarkRead(n.id)}>Mark as Read</button>
-          )}
+          <div className="notification-card">
+            <div className="notification-content">
+              <h4>{n.title}</h4>
+              <p>{n.message}</p>
+              <small>{n.created_at}</small>
+            </div>
+            <div className="notification-actions">
+              {!n.is_read && (
+                <button className="btn btn-primary" onClick={() => handleMarkRead(n.id)}>Mark as Read</button>
+              )}
+            </div>
+          </div>
         </div>
       ))}
       {notifications.length === 0 && <div className="card"><p>No notifications.</p></div>}

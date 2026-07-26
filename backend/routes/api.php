@@ -85,12 +85,25 @@ switch ($route) {
         }
         break;
 
+    case '/batches/my':
+        if ($method === 'GET') {
+            $auth->handle(function () { (new RoleMiddleware(['instructor', 'student']))->handle(function () { (new BatchController())->myBatches(); }); });
+        }
+        break;
+
     case (preg_match('#^/batches/(\d+)$#', $route, $matches) ? true : false):
         $id = (int) $matches[1];
         if ($method === 'GET') {
             $auth->handle(function () use ($id) { (new RoleMiddleware(['admin', 'instructor']))->handle(function () use ($id) { (new BatchController())->show($id); }); });
         } elseif ($method === 'PUT') {
             $auth->handle(function () use ($id) { (new RoleMiddleware(['admin']))->handle(function () use ($id) { (new BatchController())->update($id); }); });
+        }
+        break;
+
+    case (preg_match('#^/batches/(\d+)/students$#', $route, $matches) ? true : false):
+        $id = (int) $matches[1];
+        if ($method === 'GET') {
+            $auth->handle(function () use ($id) { (new RoleMiddleware(['admin', 'instructor']))->handle(function () use ($id) { (new BatchController())->getStudents($id); }); });
         }
         break;
 

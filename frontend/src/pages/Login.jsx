@@ -1,8 +1,6 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { AuthContext } from '../App'
-import { useContext } from 'react'
-import axios from 'axios'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -31,24 +29,51 @@ export default function Login() {
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto' }}>
-      <div className="card">
-        <h2>Login</h2>
-        {error && <div className="alert alert-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+    <div className="login-shell">
+      <section className="login-brand-panel" aria-label="LearnHub introduction">
+        <div className="login-brand-top">
+          <span className="brand-mark brand-mark-light" aria-hidden="true">LH</span>
+          <span className="brand-wordmark">LearnHub</span>
+        </div>
+        <div className="login-brand-copy">
+          <span className="eyebrow eyebrow-light">Learning, in full view.</span>
+          <h1>Make every learning day count.</h1>
+          <p>A considered workspace for the people who keep programmes moving, learners supported, and progress visible.</p>
+        </div>
+        <div className="login-brand-bottom">
+          <span>Role-based learning operations</span>
+          <span>Est. 2026</span>
+        </div>
+      </section>
+
+      <section className="login-form-panel">
+        <div className="login-form-wrap">
+          <div className="login-heading">
+            <span className="eyebrow">Secure access</span>
+            <h2>Welcome back.</h2>
+            <p>Sign in to continue to your workspace.</p>
           </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </div>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-      </div>
+
+          {error && <div className="alert alert-error" role="alert">{error}</div>}
+
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="form-group login-field">
+              <label htmlFor="login-email">Work email</label>
+              <input id="login-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required />
+            </div>
+            <div className="form-group login-field">
+              <label htmlFor="login-password">Password</label>
+              <input id="login-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
+            </div>
+            <button type="submit" className="btn btn-primary login-submit" disabled={loading}>
+              {loading ? 'Opening workspace...' : 'Enter workspace'}
+              {!loading && <span aria-hidden="true">↗</span>}
+            </button>
+          </form>
+
+          <p className="login-footnote">Your access is protected by the LearnHub operations team.</p>
+        </div>
+      </section>
     </div>
   )
 }

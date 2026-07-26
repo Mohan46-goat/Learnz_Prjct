@@ -15,7 +15,7 @@ export default function StudentDashboard() {
     const fetchData = async () => {
       try {
         const [batchesRes, lessonsRes, notifRes, myAttRes] = await Promise.all([
-          api.get('/batches'),
+          api.get('/batches/my'),
           api.get('/lessons'),
           api.get('/notifications'),
           api.get('/attendance/my'),

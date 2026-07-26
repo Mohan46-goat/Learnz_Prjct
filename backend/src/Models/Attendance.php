@@ -32,7 +32,13 @@ class Attendance
 
     public function findByStudent(int $studentId): array
     {
-        $stmt = $this->db->prepare('SELECT * FROM attendance WHERE student_id = :student_id ORDER BY marked_at DESC');
+        $stmt = $this->db->prepare(
+            'SELECT a.*, l.title as lesson_title, l.lesson_date
+             FROM attendance a
+             JOIN lessons l ON a.lesson_id = l.id
+             WHERE a.student_id = :student_id
+             ORDER BY a.marked_at DESC'
+        );
         $stmt->execute(['student_id' => $studentId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }

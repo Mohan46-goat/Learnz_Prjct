@@ -14,7 +14,7 @@ export default function InstructorDashboard() {
     const fetchData = async () => {
       try {
         const [batchesRes, lessonsRes, notifRes] = await Promise.all([
-          api.get('/batches'),
+          api.get('/batches/my'),
           api.get('/lessons'),
           api.get('/notifications'),
         ])

@@ -51,15 +51,21 @@ export default function Users() {
     return <div className="card"><p>Access denied. Admin only.</p></div>
   }
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <div className="loading-state"><span className="loading-mark" />Loading users...</div>
 
   return (
     <div>
-      <h1>User Management</h1>
+      <header className="page-header">
+        <div>
+          <span className="eyebrow">Workspace / Directory</span>
+          <h1 className="page-title">User Management</h1>
+          <p className="page-lede">Keep access, roles, and the learner network in good shape.</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : 'Create User'}
+        </button>
+      </header>
       {error && <div className="alert alert-error">{error}</div>}
-      <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-        {showForm ? 'Cancel' : 'Create User'}
-      </button>
       {showForm && (
         <div className="card">
           <form onSubmit={handleSubmit}>

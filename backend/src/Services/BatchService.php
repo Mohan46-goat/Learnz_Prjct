@@ -11,6 +11,15 @@ class BatchService
         $this->db = $db;
     }
 
+    public function getMyBatches(int $userId, string $role): array
+    {
+        $userModel = new \App\Models\User($this->db);
+        if ($role === 'instructor') {
+            return $userModel->getBatchesByInstructor($userId);
+        }
+        return $userModel->getBatchesByStudent($userId);
+    }
+
     public function getAllBatches(): array
     {
         $batchModel = new \App\Models\Batch($this->db);
