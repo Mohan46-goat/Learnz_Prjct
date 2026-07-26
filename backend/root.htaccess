@@ -1,0 +1,11 @@
+Options -Indexes
+
+RewriteEngine On
+
+# Block direct access to .env and sensitive files
+RewriteRule ^src/\.env - [F,L]
+RewriteRule ^src/composer\.(json|lock) - [F,L]
+
+# Forward all requests into public/
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]

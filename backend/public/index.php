@@ -1,14 +1,52 @@
 <?php
 
+// Cross-origin session cookies: must be set BEFORE session_start()
+ini_set('session.cookie_samesite', 'None');
+ini_set('session.cookie_secure', '1');
+ini_set('session.cookie_httponly', '1');
+
 session_start();
 
-require_once __DIR__ . '/../vendor/autoload.php';
+/*
+ * Local development keeps the application files beside public/:
+ *   backend/{config,routes,src,vendor}
+ * The Hostinger upload keeps those files in public_html/src/ instead.
+ * Detect the layout so the same code works in both places.
+ */
+$projectRoot = dirname(__DIR__);
+$hostingerRoot = $projectRoot . '/src';
+define('BASE_PATH', is_file($hostingerRoot . '/vendor/autoload.php') ? $hostingerRoot : $projectRoot);
+define('APP_PATH', is_dir(BASE_PATH . '/Controllers') ? BASE_PATH : BASE_PATH . '/src');
+
+require_once BASE_PATH . '/vendor/autoload.php';
+
+// Composer's local mapping is App\\ => src/. Hostinger has the App files
+// directly in src/, so this fallback supports that flattened upload layout too.
+spl_autoload_register(function (string $class): void {
+    if (!str_starts_with($class, 'App\\')) {
+        return;
+    }
+
+    $file = APP_PATH . '/' . str_replace('\\', '/', substr($class, 4)) . '.php';
+    if (is_file($file)) {
+        require_once $file;
+    }
+});
 
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 
-$corsOrigins = explode(',', getenv('CORS_ALLOWED_ORIGINS') ?: 'http://localhost:5173');
+set_exception_handler(function (\Throwable $exception): void {
+    error_log($exception->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Server configuration error', 'errors' => []]);
+});
+
+$envFile = BASE_PATH . '/.env';
+$dotenv = file_exists($envFile) ? parse_ini_file($envFile) : [];
+
+$corsOrigins = array_filter(array_map('trim', explode(',', $dotenv['CORS_ALLOWED_ORIGINS'] ?? 'http://localhost:5173')));
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if (in_array($origin, $corsOrigins, true)) {
@@ -23,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-$requestMethod = $_SERVER['REQUEST_METHOD'];
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $basePath = '/api';
 
@@ -33,9 +70,4 @@ if (strpos($requestUri, $basePath) !== 0) {
     exit;
 }
 
-$route = substr($requestUri, strlen($basePath));
-if ($route === '') {
-    $route = '/';
-}
-
-require_once __DIR__ . '/../routes/api.php';
+require_once BASE_PATH . '/routes/api.php';

@@ -17,7 +17,7 @@ class MaterialController
 
     private function getDB(): \PDO
     {
-        $config = require __DIR__ . '/../../config/database.php';
+        $config = require BASE_PATH . '/config/database.php';
         return new \PDO(
             "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['charset']}",
             $config['username'],
@@ -60,7 +60,7 @@ class MaterialController
                 return;
             }
 
-            $filePath = __DIR__ . '/../../storage/uploads/' . $material['stored_file_name'];
+            $filePath = BASE_PATH . '/storage/uploads/' . $material['stored_file_name'];
 
             if (!file_exists($filePath)) {
                 ResponseHelper::json(['success' => false, 'message' => 'File not found on disk', 'errors' => []], 404);

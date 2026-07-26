@@ -55,13 +55,20 @@ export default function Courses() {
 
   return (
     <div>
-      <h1>Course Management</h1>
+      <header className="page-header">
+        <div>
+          <span className="eyebrow">Workspace / curriculum</span>
+          <h1 className="page-title">Courses</h1>
+          <p className="page-lede">Shape the learning paths that bring every batch together.</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : '+ Create Course'}
+        </button>
+      </header>
       {error && <div className="alert alert-error">{error}</div>}
-      <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-        {showForm ? 'Cancel' : 'Create Course'}
-      </button>
       {showForm && (
         <div className="card">
+          <h3>New course</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group"><label>Name</label><input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required /></div>
             <div className="form-group"><label>Description</label><textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} /></div>

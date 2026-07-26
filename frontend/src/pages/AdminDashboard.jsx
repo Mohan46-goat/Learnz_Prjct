@@ -41,34 +41,45 @@ export default function AdminDashboard() {
   if (error) return <div className="alert alert-error">{error}</div>
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <p style={{ color: '#666', marginBottom: 20 }}>Welcome back, {user?.name}.</p>
+    <div className="dashboard-page dashboard-refresh">
+      <section className="dashboard-welcome">
+        <div>
+          <span className="eyebrow eyebrow-light">Command centre</span>
+          <h1>Good to see you, {user?.name?.split(' ')[0] || 'Admin'}.</h1>
+          <p>Your learning operation is in motion. Here is today’s live snapshot.</p>
+        </div>
+        <div className="dashboard-orbit"><span>{stats.totalStudents || 0}</span><small>learners</small></div>
+      </section>
 
-      <h3 style={{ marginBottom: 12 }}>Platform Overview</h3>
-      <div className="stat-grid">
-        <div className="stat-card"><h3>Students</h3><div className="value">{stats.totalStudents}</div></div>
-        <div className="stat-card"><h3>Instructors</h3><div className="value">{stats.totalInstructors}</div></div>
-        <div className="stat-card"><h3>Courses</h3><div className="value">{stats.totalCourses}</div></div>
-        <div className="stat-card"><h3>Batches</h3><div className="value">{stats.totalBatches}</div></div>
-      </div>
+      <section className="insight-grid" aria-label="Platform overview">
+        <Metric label="Active learners" value={stats.totalStudents} note="Across all cohorts" />
+        <Metric label="Instructors" value={stats.totalInstructors} note="Teaching today" />
+        <Metric label="Courses" value={stats.totalCourses} note="Learning pathways" />
+        <Metric label="Batches" value={stats.totalBatches} note="Running cohorts" />
+      </section>
 
-      <h3 style={{ marginBottom: 12, marginTop: 8 }}>All-Time Attendance</h3>
-      <div className="stat-grid">
-        <div className="stat-card"><h3>Present</h3><div className="value" style={{ color: '#2e7d32' }}>{stats.todayPresent}</div></div>
-        <div className="stat-card"><h3>Late</h3><div className="value" style={{ color: '#e65100' }}>{stats.todayLate}</div></div>
-        <div className="stat-card"><h3>Absent</h3><div className="value" style={{ color: '#c62828' }}>{stats.todayAbsent}</div></div>
-      </div>
-
-      <div className="card" style={{ marginTop: 8 }}>
-        <h3>Quick Actions</h3>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+      <section className="dashboard-content-grid">
+        <div className="dashboard-card attendance-summary">
+          <div className="dashboard-card-head"><div><span className="eyebrow">Attendance pulse</span><h2>Session outcomes</h2></div><span className="live-pill">Live</span></div>
+          <div className="attendance-stat-list">
+            <Attendance label="Present" value={stats.todayPresent} tone="present" />
+            <Attendance label="Late" value={stats.todayLate} tone="late" />
+            <Attendance label="Absent" value={stats.todayAbsent} tone="absent" />
+          </div>
+        </div>
+        <div className="dashboard-card quick-actions-card">
+          <div className="dashboard-card-head"><div><span className="eyebrow">Shortcuts</span><h2>Keep moving</h2></div></div>
+          <div className="quick-action-grid">
           <Link to="/users" className="btn btn-primary">Manage Users</Link>
           <Link to="/courses" className="btn btn-primary">Manage Courses</Link>
           <Link to="/batches" className="btn btn-primary">Manage Batches</Link>
           <Link to="/reports" className="btn btn-primary">View Reports</Link>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   )
 }
+
+function Metric({ label, value, note }) { return <article className="insight-card"><span>{label}</span><strong>{value || 0}</strong><small>{note}</small></article> }
+function Attendance({ label, value, tone }) { return <div className={`attendance-stat ${tone}`}><span>{label}</span><strong>{value || 0}</strong></div> }

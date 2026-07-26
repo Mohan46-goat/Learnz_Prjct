@@ -17,7 +17,7 @@ class LessonController
 
     private function getDB(): \PDO
     {
-        $config = require __DIR__ . '/../../config/database.php';
+        $config = require BASE_PATH . '/config/database.php';
         return new \PDO(
             "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['charset']}",
             $config['username'],

@@ -1,8 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+if (!defined('BASE_PATH')) {
+    throw new \RuntimeException('BASE_PATH must be defined before loading DatabaseHelper');
+}
 
-$config = require __DIR__ . '/../config/database.php';
+$config = require BASE_PATH . '/config/database.php';
 
 try {
     $pdo = new \PDO(

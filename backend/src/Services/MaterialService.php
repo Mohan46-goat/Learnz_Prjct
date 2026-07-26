@@ -13,7 +13,7 @@ class MaterialService
     public function __construct(\PDO $db)
     {
         $this->db = $db;
-        $this->uploadDir = __DIR__ . '/../../storage/uploads/';
+        $this->uploadDir = BASE_PATH . '/storage/uploads/';
 
         if (!is_dir($this->uploadDir)) {
             mkdir($this->uploadDir, 0755, true);

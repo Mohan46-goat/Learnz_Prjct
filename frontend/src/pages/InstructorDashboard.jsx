@@ -49,22 +49,23 @@ export default function InstructorDashboard() {
   if (loading) return <div>Loading dashboard...</div>
 
   return (
-    <div>
-      <h1>Instructor Dashboard</h1>
-      <div className="stat-grid">
-        <div className="stat-card"><h3>Assigned Batches</h3><div className="value">{batches.length}</div></div>
-        <div className="stat-card"><h3>Today Present</h3><div className="value">{attendance.present}</div></div>
-        <div className="stat-card"><h3>Today Late</h3><div className="value">{attendance.late}</div></div>
-        <div className="stat-card"><h3>Today Absent</h3><div className="value">{attendance.absent}</div></div>
-        <div className="stat-card"><h3>Unread Notifications</h3><div className="value">{notifications.length}</div></div>
-      </div>
+    <div className="dashboard-page dashboard-refresh">
+      <section className="dashboard-welcome dashboard-welcome-instructor"><div><span className="eyebrow eyebrow-light">Teaching studio</span><h1>Ready to guide the room?</h1><p>{user?.name}, your teaching day is organised and ready to go.</p></div><div className="dashboard-orbit"><span>{batches.length}</span><small>batches</small></div></section>
+      <section className="insight-grid instructor-insights">
+        <Metric label="Assigned batches" value={batches.length} note="Your cohorts" />
+        <Metric label="Present today" value={attendance.present} note="Session check-ins" />
+        <Metric label="Late today" value={attendance.late} note="Needs attention" />
+        <Metric label="Unread updates" value={notifications.length} note="From your workspace" />
+      </section>
       {todayLesson && (
-        <div className="card">
-          <h3>Today's Lesson</h3>
-          <p><strong>{todayLesson.title}</strong></p>
+        <div className="dashboard-card lesson-spotlight">
+          <span className="eyebrow">Today’s lesson</span>
+          <h2>{todayLesson.title}</h2>
           <p>{todayLesson.lesson_date} {todayLesson.start_time} - {todayLesson.end_time}</p>
         </div>
       )}
     </div>
   )
 }
+
+function Metric({ label, value, note }) { return <article className="insight-card"><span>{label}</span><strong>{value || 0}</strong><small>{note}</small></article> }

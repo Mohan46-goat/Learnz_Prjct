@@ -51,17 +51,17 @@ export default function StudentDashboard() {
   if (loading) return <div>Loading dashboard...</div>
 
   return (
-    <div>
-      <h1>Student Dashboard</h1>
-      <div className="stat-grid">
-        <div className="stat-card"><h3>My Batches</h3><div className="value">{batches.length}</div></div>
-        <div className="stat-card"><h3>Attendance Percentage</h3><div className="value">{percentage}%</div></div>
-        <div className="stat-card"><h3>Unread Notifications</h3><div className="value">{notifications.length}</div></div>
-      </div>
+    <div className="dashboard-page dashboard-refresh">
+      <section className="dashboard-welcome dashboard-welcome-student"><div><span className="eyebrow eyebrow-light">Learning space</span><h1>Make today count.</h1><p>{user?.name}, every session is a step forward.</p></div><div className="dashboard-orbit"><span>{percentage}%</span><small>attendance</small></div></section>
+      <section className="insight-grid student-insights">
+        <Metric label="My batches" value={batches.length} note="Learning now" />
+        <Metric label="Attendance" value={`${percentage}%`} note="Your consistency" />
+        <Metric label="New updates" value={notifications.length} note="Unread notifications" />
+      </section>
       {todayLesson && (
-        <div className="card">
-          <h3>Today's Lesson</h3>
-          <p><strong>{todayLesson.title}</strong></p>
+        <div className="dashboard-card lesson-spotlight">
+          <span className="eyebrow">Today’s lesson</span>
+          <h2>{todayLesson.title}</h2>
           <p>{todayLesson.lesson_date} {todayLesson.start_time} - {todayLesson.end_time}</p>
           <p>Status: <strong>{attendanceStatus ? attendanceStatus.toUpperCase() : 'Not marked'}</strong></p>
         </div>
@@ -69,3 +69,5 @@ export default function StudentDashboard() {
     </div>
   )
 }
+
+function Metric({ label, value, note }) { return <article className="insight-card"><span>{label}</span><strong>{value || 0}</strong><small>{note}</small></article> }

@@ -1,6 +1,6 @@
 import { Link, NavLink, useNavigate, Outlet, Navigate, useLocation } from 'react-router-dom'
 import { AuthContext } from '../App'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 const NAV_ITEMS = [
   { label: 'Dashboard', to: '/dashboard', section: 'Workspace' },
@@ -24,14 +24,33 @@ function getInitials(name = '') {
 }
 
 export default function Layout() {
-  const { user, logout } = useContext(AuthContext)
+  const { user, logout, api } = useContext(AuthContext)
   const navigate = useNavigate()
   const location = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    const loadUnreadCount = async () => {
+      try {
+        const response = await api.get('/notifications')
+        setUnreadCount((response.data.notifications || []).filter((notification) => !notification.is_read).length)
+      } catch {
+        setUnreadCount(0)
+      }
+    }
+
+    loadUnreadCount()
+    window.addEventListener('notifications-updated', loadUnreadCount)
+    return () => window.removeEventListener('notifications-updated', loadUnreadCount)
+  }, [api])
 
   const handleLogout = async () => {
     await logout()
     navigate('/login')
   }
+
+  const closeMenu = () => setMenuOpen(false)
 
   if (!user) return <Navigate to="/login" replace />
 
@@ -40,7 +59,7 @@ export default function Layout() {
 
   return (
     <div className="app-shell">
-      <aside className="app-rail">
+      <aside className={`app-rail${menuOpen ? ' is-open' : ''}`}>
         <Link className="rail-brand" to="/dashboard" aria-label="LearnHub dashboard">
           <span className="brand-mark" aria-hidden="true">LH</span>
           <span className="brand-lockup">
@@ -55,9 +74,11 @@ export default function Layout() {
             <NavLink
               key={item.to}
               to={item.to}
+              onClick={closeMenu}
               className={({ isActive }) => `nav-item${isActive ? ' is-active' : ''}`}
             >
               <span>{item.label}</span>
+              {item.to === '/notifications' && unreadCount > 0 && <span className="nav-notification-count" aria-label={`${unreadCount} unread notifications`}>{unreadCount > 99 ? '99+' : unreadCount}</span>}
             </NavLink>
           ))}
         </nav>
@@ -76,8 +97,19 @@ export default function Layout() {
         </div>
       </aside>
 
+      {menuOpen && <button className="nav-scrim" type="button" aria-label="Close navigation" onClick={closeMenu} />}
+
       <div className="app-content">
         <header className="topbar">
+          <button
+            className="mobile-nav-toggle"
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(true)}
+          >
+            <span /> <span />
+          </button>
           <div className="breadcrumbs" aria-label="Breadcrumb">
             <span>LearnHub</span>
             <span aria-hidden="true">/</span>
