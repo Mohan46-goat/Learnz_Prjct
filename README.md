@@ -87,6 +87,7 @@ learnhub/
 | [DEPLOYMENT.md](docs/DEPLOYMENT.md)     | Deployment guide                         |
 | [DEVELOPMENT.md](docs/DEVELOPMENT.md)   | Development setup and workflow           |
 | [TESTING.md](docs/TESTING.md)           | Testing strategy and instructions        |
+| [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) | Simple project flow, modules, demo accounts, and tester guide |
 
 ## License
 
